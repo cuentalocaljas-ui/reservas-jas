@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Reservas JAS Colombia</title>
 
   <style>
@@ -20,17 +21,19 @@
       justify-content: center;
       align-items: center;
       color: white;
+      padding: 30px 20px;
     }
 
     .container {
-      width: 90%;
-      max-width: 900px;
+      width: 100%;
+      max-width: 950px;
       text-align: center;
     }
 
     h1 {
       font-size: 38px;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
+      font-weight: 700;
     }
 
     .subtitle {
@@ -48,20 +51,21 @@
     .office {
       background: white;
       color: #123047;
-      padding: 30px 20px;
+      padding: 32px 20px;
       border-radius: 14px;
       text-decoration: none;
-      transition: 0.25s;
-      box-shadow: 0 8px 22px rgba(0,0,0,.25);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.25);
+      display: block;
     }
 
     .office:hover {
       transform: translateY(-6px);
-      box-shadow: 0 14px 30px rgba(0,0,0,.35);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
     }
 
     .icon {
-      font-size: 38px;
+      font-size: 40px;
       margin-bottom: 15px;
     }
 
@@ -73,6 +77,7 @@
     .office p {
       font-size: 14px;
       color: #687987;
+      line-height: 1.5;
     }
 
     footer {
@@ -84,3 +89,62 @@
     @media (max-width: 700px) {
       .offices {
         grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 30px;
+      }
+
+      .container {
+        max-width: 500px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>Reservas JAS Colombia</h1>
+
+    <div class="subtitle">
+      Selecciona la oficina para realizar tu reserva
+    </div>
+
+    <div class="offices">
+
+      <a class="office" href="bogota.html">
+        <div class="icon">🏢</div>
+        <h2>Bogotá 101</h2>
+        <p>
+          Puestos de trabajo, salas y Phonebooks
+        </p>
+      </a>
+
+      <a class="office" href="aeropuerto.html">
+        <div class="icon">✈️</div>
+        <h2>Aeropuerto</h2>
+        <p>
+          Puestos de trabajo y recursos
+        </p>
+      </a>
+
+      <a class="office" href="medellin.html">
+        <div class="icon">📍</div>
+        <h2>Medellín</h2>
+        <p>
+          Puestos de trabajo y recursos
+        </p>
+      </a>
+
+    </div>
+
+    <footer>
+      JAS Forwarding Colombia | Sistema de Reservas
+    </footer>
+
+  </div>
+
+</body>
+</html>
