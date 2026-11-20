@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>JAS Booking | Iniciar sesión</title>
+
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --jas-red: #d71920;
+            --jas-red-dark: #b4141a;
+            --text: #202124;
+            --muted: #6b7280;
+            --border: #dfe3e8;
+            --background: #f4f6f8;
+            --white: #ffffff;
+            --success: #137333;
+            --error: #b3261e;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-bar {
+            height: 6px;
+            background: var(--jas-red);
+            width: 100%;
+        }
+
+        .page {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 20px;
+        }
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 430px;
+        }
+
+        .brand {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .jas-logo {
+            font-size: 42px;
+            font-weight: 800;
+            letter-spacing: -2px;
+            color: var(--jas-red);
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
+        .brand-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .brand-subtitle {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .login-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 32px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+        }
+
+        .login-card h1 {
+            font-size: 21px;
+            margin-bottom: 6px;
+        }
+
+        .login-card .description {
+            font-size: 14px;
+            color: var(--muted);
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 7px;
+        }
+
+        input {
+            width: 100%;
+            height: 46px;
+            padding: 0 13px;
+            border: 1px solid #cfd4da;
+            border-radius: 7px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+            background: #fff;
+        }
+
+        input:focus {
+            border-color: var(--jas-red);
+            box-shadow: 0 0 0 3px rgba(215, 25, 32, 0.10);
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper input {
+            padding-right: 75px;
+        }
+
+        .show-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 0;
+            background: transparent;
+            color: var(--jas-red);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .login-button {
+            width: 100%;
+            height: 47px;
+            border: 0;
+            border-radius: 7px;
+            background: var(--jas-red);
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.05s;
+            margin-top: 3px;
+        }
+
+        .login-button:hover {
+            background: var(--jas-red-dark);
+        }
+
+        .login-button:active {
+            transform: translateY(1px);
+        }
+
+        .login-button:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        .message {
+            display: none;
+            border-radius: 7px;
+            padding: 11px 12px;
+            margin-bottom: 18px;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .message.error {
+            display: block;
+            color: var(--error);
+            background: #fce8e6;
+            border: 1px solid #f4c7c3;
+        }
+
+        .message.success {
+            display: block;
+            color: var(--success);
+            background: #e6f4ea;
+            border: 1px solid #b7dfc2;
+        }
+
+        .security-note {
+            margin-top: 22px;
+            padding-top: 18px;
+            border-top: 1px solid #eceff2;
+            font-size: 12px;
+            line-height: 1.55;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            display: inline-block;
+            border: 2px solid rgba(255,255,255,.45);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            vertical-align: middle;
+            margin-right: 7px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .footer {
+            padding: 18px 10px;
+            text-align: center;
+            font-size: 12px;
+            color: #8a9097;
+        }
+
+        @media (max-width: 520px) {
+            .login-card {
+                padding: 25px 20px;
+            }
+
+            .jas-logo {
+                font-size: 37px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="top-bar"></div>
+
+<main class="page">
+
+    <div class="login-wrapper">
+
+        <div class="brand">
+
+            <div class="jas-logo">
+                JAS
+            </div>
+
+            <div class="brand-title">
+                Sistema de Reservas
+            </div>
+
+            <div class="brand-subtitle">
+                JAS Forwarding Colombia
+            </div>
+
+        </div>
+
+        <div class="login-card">
+
+            <h1>Iniciar sesión</h1>
+
+            <p class="description">
+                Ingresa con la cuenta autorizada para acceder al sistema de reservas.
+            </p>
+
+            <div id="message" class="message"></div>
+
+            <form id="loginForm">
+
+                <div class="form-group">
+
+                    <label for="email">
+                        Correo electrónico
+                    </label>
+
+                    <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        autocomplete="username"
+                        placeholder="nombre@jas.com"
+                        required
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="password">
+                        Contraseña
+                    </label>
+
+                    <div class="password-wrapper">
+
+                        <input
+                            id="password"
+                            name="password"
+                            type="password"
+                            autocomplete="current-password"
+                            placeholder="Ingresa tu contraseña"
+                            required
+                        >
+
+                        <button
+                            id="showPassword"
+                            class="show-password"
+                            type="button"
+                        >
+                            Mostrar
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <button
+                    id="loginButton"
+                    class="login-button"
+                    type="submit"
+                >
+                    Iniciar sesión
+                </button>
+
+            </form>
+
+            <div class="security-note">
+                El acceso está disponible únicamente para usuarios autorizados.
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+<footer class="footer">
+    JAS Forwarding Colombia · Booking System
+</footer>
+
+
+<script>
+    // =========================================================
+    // SUPABASE
+    // =========================================================
+
+    const SUPABASE_URL =
+        "https://chbohbctyvitbaswmjpk.supabase.co";
+
+    const SUPABASE_PUBLISHABLE_KEY =
+        "sb_publishable_nvR1G6KKiGQojWWW56VfZQ_NH5xiHNA";
+
+
+    const supabaseClient = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY,
+        {
+            auth: {
+                persistSession: true,
+                autoRefreshToken: true,
+                detectSessionInUrl: true
+            }
+        }
+    );
+
+
+    // =========================================================
+    // ELEMENTOS
+    // =========================================================
+
+    const loginForm =
+        document.getElementById("loginForm");
+
+    const emailInput =
+        document.getElementById("email");
+
+    const passwordInput =
+        document.getElementById("password");
+
+    const loginButton =
+        document.getElementById("loginButton");
+
+    const message =
+        document.getElementById("message");
+
+    const showPasswordButton =
+        document.getElementById("showPassword");
+
+
+    // =========================================================
+    // MENSAJES
+    // =========================================================
+
+    function showMessage(text, type = "error") {
+
+        message.textContent = text;
+
+        message.className =
+            "message " + type;
+    }
+
+
+    function clearMessage() {
+
+        message.textContent = "";
+
+        message.className =
+            "message";
+    }
+
+
+    // =========================================================
+    // BOTON CARGANDO
+    // =========================================================
+
+    function setLoading(loading) {
+
+        loginButton.disabled = loading;
+
+        if (loading) {
+
+            loginButton.innerHTML =
+                '<span class="spinner"></span>Validando...';
+
+        } else {
+
+            loginButton.textContent =
+                "Iniciar sesión";
+        }
+    }
+
+
+    // =========================================================
+    // MOSTRAR / OCULTAR CONTRASEÑA
+    // =========================================================
+
+    showPasswordButton.addEventListener(
+        "click",
+        function () {
+
+            const hidden =
+                passwordInput.type === "password";
+
+            passwordInput.type =
+                hidden ? "text" : "password";
+
+            showPasswordButton.textContent =
+                hidden ? "Ocultar" : "Mostrar";
+        }
+    );
+
+
+    // =========================================================
+    // VALIDAR PERFIL
+    // =========================================================
+
+    async function getAuthorizedProfile(userId) {
+
+        const {
+            data,
+            error
+        } = await supabaseClient
+            .from("profiles")
+            .select(`
+                id,
+                full_name,
+                email,
+                role,
+                department,
+                active,
+                office_id
+            `)
+            .eq("id", userId)
+            .single();
+
+
+        if (error) {
+
+            console.error(
+                "Error consultando profile:",
+                error
+            );
+
+            return {
+                allowed: false,
+                profile: null
+            };
+        }
+
+
+        if (!data) {
+
+            return {
+                allowed: false,
+                profile: null
+            };
+        }
+
+
+        if (data.active !== true) {
+
+            return {
+                allowed: false,
+                profile: data
+            };
+        }
+
+
+        return {
+            allowed: true,
+            profile: data
+        };
+    }
+
+
+    // =========================================================
+    // REDIRECCION SEGUN PERFIL
+    // =========================================================
+
+    function redirectUser(profile) {
+
+        /*
+         * Por ahora estamos trabajando únicamente Bogotá.
+         *
+         * Más adelante esta función podrá decidir:
+         *
+         * Bogotá
+         * Medellín
+         * Aeropuerto
+         * Administrador
+         *
+         */
+
+        window.location.replace("bogota.html");
+    }
+
+
+    // =========================================================
+    // LOGIN
+    // =========================================================
+
+    loginForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+            clearMessage();
+
+
+            const email =
+                emailInput.value.trim().toLowerCase();
+
+            const password =
+                passwordInput.value;
+
+
+            if (!email || !password) {
+
+                showMessage(
+                    "Ingresa tu correo y contraseña."
+                );
+
+                return;
+            }
+
+
+            setLoading(true);
+
+
+            try {
+
+                // ---------------------------------------------
+                // AUTENTICACION
+                // ---------------------------------------------
+
+                const {
+                    data,
+                    error
+                } = await supabaseClient.auth
+                    .signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+
+
+                if (error) {
+
+                    console.error(
+                        "Error login:",
+                        error
+                    );
+
+                    showMessage(
+                        "Correo o contraseña incorrectos."
+                    );
+
+                    return;
+                }
+
+
+                if (!data || !data.user) {
+
+                    showMessage(
+                        "No fue posible iniciar sesión."
+                    );
+
+                    return;
+                }
+
+
+                // ---------------------------------------------
+                // PERFIL
+                // ---------------------------------------------
+
+                const result =
+                    await getAuthorizedProfile(
+                        data.user.id
+                    );
+
+
+                if (!result.allowed) {
+
+                    await supabaseClient.auth
+                        .signOut();
+
+                    showMessage(
+                        "Tu usuario no está autorizado para acceder al sistema."
+                    );
+
+                    return;
+                }
+
+
+                // ---------------------------------------------
+                // ACCESO CORRECTO
+                // ---------------------------------------------
+
+                showMessage(
+                    "Acceso correcto. Ingresando...",
+                    "success"
+                );
+
+
+                /*
+                 * Guardamos únicamente información visual.
+                 *
+                 * NO usamos localStorage para conceder permisos.
+                 * Los permisos reales continúan dependiendo
+                 * de Supabase Auth + RLS.
+                 */
+
+                sessionStorage.setItem(
+                    "jas_profile",
+                    JSON.stringify({
+                        full_name:
+                            result.profile.full_name,
+
+                        role:
+                            result.profile.role,
+
+                        department:
+                            result.profile.department,
+
+                        office_id:
+                            result.profile.office_id
+                    })
+                );
+
+
+                setTimeout(
+                    function () {
+
+                        redirectUser(
+                            result.profile
+                        );
+
+                    },
+                    450
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Error inesperado:",
+                    error
+                );
+
+                showMessage(
+                    "Ocurrió un error inesperado. Intenta nuevamente."
+                );
+
+
+            } finally {
+
+                setLoading(false);
+            }
+        }
+    );
+
+
+    // =========================================================
+    // USUARIO YA AUTENTICADO
+    // =========================================================
+
+    async function checkExistingSession() {
+
+        try {
+
+            const {
+                data,
+                error
+            } = await supabaseClient.auth
+                .getSession();
+
+
+            if (error) {
+
+                console.error(
+                    "Error obteniendo sesión:",
+                    error
+                );
+
+                return;
+            }
+
+
+            const session =
+                data?.session;
+
+
+            if (!session) {
+
+                return;
+            }
+
+
+            const result =
+                await getAuthorizedProfile(
+                    session.user.id
+                );
+
+
+            if (!result.allowed) {
+
+                await supabaseClient.auth
+                    .signOut();
+
+                return;
+            }
+
+
+            redirectUser(
+                result.profile
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Error verificando sesión:",
+                error
+            );
+        }
+    }
+
+
+    // =========================================================
+    // INICIALIZACION
+    // =========================================================
+
+    checkExistingSession();
+
+</script>
+
+</body>
+</html>
